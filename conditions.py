@@ -27,3 +27,16 @@ if p ^ q:
     print('p xor q is true')
 else:
     print('not xor p and q')
+
+a = 10
+if a<12:
+    print('a<12')
+    print('2nd line')
+print('after the block')
+
+def sumit(a,b):
+    # comment
+    return a+b
+
+print(sumit(3,8))
+print(sumit(3,4))
