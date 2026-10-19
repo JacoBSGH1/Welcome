@@ -7,3 +7,5 @@ print(f'arr_b={arr_b}')
 for e in arr_b:
     print(f'e={e} type={type(e)}')
 
+# in python arrays are lists
+
