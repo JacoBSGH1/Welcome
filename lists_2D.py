@@ -52,3 +52,17 @@ def sum_list(my_list):
 print(sum_list(points))
 print(sum(sum_rows(points)))
 print(sum(sum_columns(points)))
+
+cur = ['USD', 'EUR', 'PLN']
+rates = [3.8, 4.3, 1.0]
+
+rates_list = list(zip(cur, rates)) #zip takes the elements of both lists and
+# combines them into tuples alongside indexes
+# it DOES NOT generate the list object, but allows us to work on it as if we did generate it (?)
+print(rates_list)
+
+for cur, rate in zip(cur, rates):
+    print(f'{cur} -> {rate}')
+
+currencies_rates = list(zip(*rates_list)) # unzip into a list
+print(currencies_rates)
