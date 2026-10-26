@@ -66,3 +66,21 @@ for cur, rate in zip(cur, rates):
 
 currencies_rates = list(zip(*rates_list)) # unzip into a list
 print(currencies_rates)
+
+l_a = [1,2,3]
+l_b = [3*x for x in l_a if x>1] # conditions inside a list
+print(l_b)
+
+print('-'*60)
+
+def sum_rows_single_line(my_list): # with usage of conditions inside a list - look above
+    return [sum(row) for row in my_list]
+
+def sum_cols_zip(my_list):
+    unzip_cols = list(zip(*my_list))
+    print(unzip_cols)
+    return sum_rows_single_line(zip(*my_list))
+
+print(f'sum_rows_single_line: {sum_rows_single_line(points)}')
+print(f'sum_cols_zip: {sum_cols_zip(points)}') #zip transposes the matrix???
+
