@@ -27,39 +27,28 @@ for i in range(len(pLDDT_loop_proteins_B)):
 
 pLDDT_loop_proteins_B_dict = pLDDT_loop_proteins_B.to_dict(orient='records')
 
-L4_sum, L5_sum, L6_sum, L7_sum, L8_sum = 0,0,0,0,0
-L4_count, L5_count, L6_count, L7_count, L8_count = 0,0,0,0,0
+types = ['L4', 'L5', 'L6', 'L7', 'L8']
+sums = {t: 0 for t in types}
+counts = {t: 0 for t in types}
 for record in pLDDT_loop_proteins_B_dict:
     lasso_type = record['#Lasso_type']
-    if lasso_type == "L4":
-        L4_sum = L4_sum + record['pLDDT_chain'] + record['Loop_length'] + record['Loop_area']
-        L4_count += 1
-    if lasso_type == "L5":
-        L5_sum = L5_sum + record['pLDDT_chain'] + record['Loop_length'] + record['Loop_area']
-        L5_count += 1
-    if lasso_type == "L6":
-        L6_sum = L6_sum + record['pLDDT_chain'] + record['Loop_length'] + record['Loop_area']
-        L6_count += 1
-    if lasso_type == "L7":
-        L7_sum = L7_sum + record['pLDDT_chain'] + record['Loop_length'] + record['Loop_area']
-        L7_count += 1
-    if lasso_type == "L8":
-        L8_sum = L8_sum + record['pLDDT_chain'] + record['Loop_length'] + record['Loop_area']
-        L8_count += 1
-    else:
-        continue
+    if lasso_type in sums:
+        sums[lasso_type] += record['pLDDT_chain'] + record['Loop_area'] + record['Loop_length']
+        counts[lasso_type] += 1
 
-L4_average = L4_sum/ (3 * L4_count)
-L5_average = L5_sum/ (3 * L5_count)
-L6_average = L6_sum/ (3 * L6_count)
-L7_average = L7_sum / (3 * L7_count)
-L8_average = L8_sum / (3 * L8_count)
+averages = {}
+for t in types:
+    averages[t] = sums[t]/(3*counts[t])
 
-print(f'L4_average: {L4_average}, L5_average: {L5_average}, L6_average: {L6_average}, L7_average: {L7_average}, L8_average: {L8_average}')
+for t in types:
+    print(f'{t}_average: {averages[t]}')
+
 lasso_proteins_stats = os.path.join('..', 'data', 'lasso_proteins_stats.csv')
 f = open(lasso_proteins_stats, 'w')
 f.write('Type,Overall Average\n')
-f.write(f'L4,{L4_average}\nL5,{L5_average}\nL6,{L6_average}\nL7,{L7_average}\nL8,{L8_average}\nAll,{loops_average(loop_proteins_dict)}\n')
+for t in types:
+    f.write(f'{t},{averages[t]}\n')
+f.write(f'All,{loops_average(pLDDT_loop_proteins_B_dict)}\n')
 f.close()
 
 
