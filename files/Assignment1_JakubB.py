@@ -64,7 +64,7 @@ f.close()
 
 
 '''
-# b) - crazy Claude commands
+# b) - crazy Claude commands - checked it out of interest on how to do it actually efficiently
 plDDT_loop_proteins_grouped = pd.read_csv(proteins_path, sep='\t',usecols=[0,5,7,8])
 def average_loop_proteins_grouped(file):
     rows = plDDT_loop_proteins_grouped.to_dict(orient='records')
