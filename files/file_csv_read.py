@@ -15,10 +15,10 @@ print(rates_dict)
 a = 100
 print(round(100*rates_dict['PLN']/rates_dict['EUR'],2))
 
-#how to do it quickly - Pandas (I don't have it installed)
-'''import pandas as pd
+#how to do it quickly - Pandas
+import pandas as pd
 
-df = pd.read.csv(rates_file)
+df = pd.read_csv(rates_file)
 print(df.head())
 
 df_cur = df.set_index('Currency')
@@ -27,4 +27,3 @@ print(df_cur['Value'])
 rates = df_cur['Value'].to_dict()
 print(rates)
 print(rates['PLN'] * rates['EUR'])
-'''
