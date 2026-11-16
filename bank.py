@@ -23,6 +23,19 @@ class Account:
         # to the customer who owns this account. We need to have a customer first.
         self.__balance = 0 #__ makes it private, not easily changeable.
 
+    def deposit(self, amount):
+        if amount < 0:
+            print("Deposit amount must be greater than 0")
+        self.__balance += amount
+        return amount
+
+    def withdraw(self, amount):
+        if amount <= self.__balance & amount > 0:
+            self.__balance -= amount
+        else:
+            print("Not enough money to withdraw/withdrawal should be higher than 0")
+        return amount
+
     def __repr__(self):
         return f"Account({self.id}, {self.customer.last_name}, {self.currency}, {self.__balance})"
 
@@ -44,3 +57,6 @@ class Bank:
 
     def __repr__(self):
         return f"{self.name} bank[\n{self.cust_list}\n{self.acc_list}]"
+
+# add deposit(amount) and withdraw(amount) methods and show how they can be used.
+# Take into account different cases/scenarios
