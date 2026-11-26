@@ -15,8 +15,3 @@ print(check_if_valid_email('123@gmail.com')) # True
 '''
 # 19.10
 # done in files/file_csv_read and folder_operations
-
-
-
-
-
