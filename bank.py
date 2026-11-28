@@ -22,7 +22,7 @@ class Customer:
 
 class Account:
     last_id = 1000
-    yearly_interest_rate = 0.02
+    yearly_interest_rate = 0.025
 
     def __init__(self, customer, currency='USD'):
         self.customer = customer
@@ -31,6 +31,7 @@ class Account:
         self.id = Account.last_id
         self.__balance = 0
         self.transactions = []
+        #self.report = []
 
     def get_balance(self):
         return self.__balance
@@ -41,49 +42,50 @@ class Account:
         if d_currency not in rates:
             raise NonAvailableCurrencyException(f"Currency {d_currency} is not available for transactions")
         if d_currency != self.currency:
-            amount = amount * rates[self.currency]/rates[d_currency]
+            amount = round(amount * rates[self.currency]/rates[d_currency],2)
         self.__balance += round(amount,2)
-        self.transactions.append(AccountTransaction(transaction,amount))
+        self.transactions.append(AccountTransaction(self.id,transaction,amount))
 
-    def withdraw(self, amount: int):
+    def withdraw(self, amount: int, transaction="Withdrawal"):
         if amount <= 0:
             raise InvalidAmountException(f"Invalid value {amount}")
         if self.__balance >= amount:
-            self.__balance -= amount
+            self.__balance -= round(amount,2)
+            self.transactions.append(AccountTransaction(self.id, transaction, amount))
         else:
             raise InsufficientFundsException(f"Insufficient funds requested/available {amount}/{self.__balance}", amount, self.__balance)
 
-    def apply_interest(self, yearly_interest_rate):
+    def apply_interest(self, yearly_interest_rate, transaction="Interest"):
         self.yearly_interest_rate = yearly_interest_rate
         daily_rate = yearly_interest_rate/365
         interest = round(self.__balance * daily_rate,2)
-        self.__balance += interest
+        self.__balance += round(interest,2)
+        self.transactions.append(AccountTransaction(self.id, transaction, interest))
         return interest
-
-    def transaction_report(self, account):
-        pass
 
     def __repr__(self):
         return f"A[{self.id}, {self.customer.last_name}, {self.__balance} {self.currency}]"
 
 class AccountTransaction:
     last_id = 0
-    def __init__(self, transaction, amount):
+    def __init__(self, account_tran_id, transaction, amount):
         self.timestamp = datetime.datetime.now()
+        self.account_tran_id = account_tran_id
         self.transaction = transaction
         AccountTransaction.last_id += 1
         self.transaction_id = AccountTransaction.last_id
         self.amount = amount
     def __repr__(self):
         time_format = self.timestamp.strftime('%Y-%m-%d %H:%M:%S')
-        return f"Transaction no.: {self.transaction_id}, Time: {time_format}, Amount:{self.amount:.2f}"
+        return (f"Transaction no.: {self.transaction_id}, Account: {self.account_tran_id}, Type: {self.transaction},"
+                f"Amount:{self.amount:.2f}, Time: {time_format}")
 
 class Bank:
     def __init__(self, name):
         self.name = name
         self.cust_list = []
         self.acc_list = []
-        self.selected_account = None
+
 
     def create_customer(self, first_name, last_name):
         customer = Customer(first_name, last_name)
@@ -98,7 +100,6 @@ class Bank:
     def account_select(self, account_id):
         for account in self.acc_list:
             if account.id == account_id:
-                self.selected_account = account
                 return account
         raise InvalidAccountException(f"Account with this id does not exist: {account_id}")
 
@@ -112,14 +113,20 @@ class Bank:
         to_account_id = self.account_select(to_account_id)
 
         if from_account_id.get_balance() < amount:
-            raise InsufficientFundsException(f"Not enough money to make a transfer: {amount/from_account_id.balance}", amount, from_account_id.balance)
+            raise InsufficientFundsException(f"Not enough money to make a transfer: {amount}/{from_account_id.get_balance()}", amount, from_account_id.get_balance())
 
-        from_account_id.withdraw(amount)
-        to_account_id.deposit(amount, d_currency=from_account_id.currency)
+        from_account_id.withdraw(amount, "Transfer out")
+        to_account_id.deposit(amount, from_account_id.currency, "Transfer in")
 
     def run_daily_interest_updater(self):
         for account in self.acc_list:
             account.apply_interest(Account.yearly_interest_rate)
+
+    def transaction_report(self, account_id_report):
+        account = self.account_select(account_id_report)
+        print(f"Transactions on account: {account_id_report}")
+        for transaction in account.transactions:
+            print(transaction)
 
     def __repr__(self):
         return f'{self.name} bank[\n{self.cust_list}\n{self.acc_list}]'
